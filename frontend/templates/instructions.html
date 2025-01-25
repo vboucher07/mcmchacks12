@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instructions</title>
     <script>
-        // JavaScript to trigger backend actions
-        function triggerBackend(action) {
+        function updateImage(action) {
             fetch("/backend-action", {
                 method: "POST",
                 headers: {
@@ -16,8 +15,12 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data.message);
-                //alert(data.result); // Display the result
+                if (data.error) {
+                    console.error(data.error);
+                } else {
+                    const instructionImage = document.getElementById("instruction-image");
+                    instructionImage.src = data.result; // Update image path dynamically
+                }
             })
             .catch(error => console.error("Error:", error));
         }
@@ -25,7 +28,10 @@
 </head>
 <body>
     <h1>Instructions Page</h1>
-    <button onclick="triggerBackend('previous')">Previous</button>
-    <button onclick="triggerBackend('next')">Next</button>
+    <button onclick="updateImage('prev')">Previous</button>
+    <button onclick="updateImage('next')">Next</button>
+    <div style="margin-top: 20px;">
+        <img id="instruction-image" src="/static/steps/step1.png" alt="Instruction Image" style="max-width: 100%; height: auto;">
+    </div>
 </body>
 </html>

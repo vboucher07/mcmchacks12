@@ -6,7 +6,7 @@ from backend import dummyTest
 if __name__ == "__main__":
     app = frontend.create_app()
 
-    @frontend.register_action("previous")
+    @frontend.register_action("prev")
     def previous_action():
         return dummyTest.test_prev()
 
