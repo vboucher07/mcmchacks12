@@ -4,13 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instructions</title>
+    <script>
+        // JavaScript to handle button clicks
+        function callFunction(action) {
+            fetch(`/${action}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(`${action} button clicked!`, data);
+                // Update page dynamically if needed
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
 </head>
 <body>
-    <h1>Welcome to the Instructions Page</h1>
-    <nav>
-        <a href="/">Home</a> | 
-        <a href="/projector">Projector</a> | 
-        <a href="/instructions">Instructions</a>
-    </nav>
+    <h1>Instructions</h1>
+    <p>Here are your instructions...</p>
+
+    <!-- Buttons -->
+    <button onclick="callFunction('previous')">Previous</button>
+    <button onclick="callFunction('next')">Next</button>
 </body>
 </html>

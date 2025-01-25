@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 
 app = Flask(__name__)
 
@@ -17,6 +17,19 @@ def projector():
 def instructions():
     return render_template("instructions.html")
 
+# Previous button action
+@app.route("/previous", methods=["POST"])
+def previous():
+    # Python function logic for "Previous"
+    print("Previous button clicked!")
+    return jsonify({"message": "Previous function executed successfully"})
+
+# Next button action
+@app.route("/next", methods=["POST"])
+def next():
+    # Python function logic for "Next"
+    print("Next button clicked!")
+    return jsonify({"message": "Next function executed successfully"})
 
 def run():
     app.run(host="0.0.0.0", port=8000, debug=True)
