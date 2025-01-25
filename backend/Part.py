@@ -5,4 +5,6 @@ class Part:
         self.step_num = step_num
 
     def __str__(self):
-        return f"Step: {self.step_num}"
+        return f"Part Tag: {self.stag} Step: {self.step_num}"
+    
+    
