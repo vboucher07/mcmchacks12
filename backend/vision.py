@@ -171,7 +171,7 @@ def findChessBoard(m, n, max_frames=30, show_frame=False):
        ]
        One tuple per detected chessboard bounding box. If none found, returns [].
     """
-    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
     if not cap.isOpened():
         print("Error opening camera.")
         return []
@@ -228,7 +228,5 @@ if __name__ == "__main__":
     # Example usage
     # aruco_id_to_find = 42
     # results = findAruco(aruco_id_to_find)
-
-    results = findChessBoard(5, 5, show_frame=True)
-
+    results = findChessBoard(8, 8, show_frame=True)
     print("Results:", results)
