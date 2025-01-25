@@ -5,30 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instructions</title>
     <script>
-        // JavaScript to handle button clicks
-        function callFunction(action) {
-            fetch(`/${action}`, {
+        // JavaScript to trigger backend actions
+        function triggerBackend(action) {
+            fetch("/backend-action", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({}),
+                body: JSON.stringify({ action: action }),
             })
             .then(response => response.json())
             .then(data => {
-                console.log(`${action} button clicked!`, data);
-                // Update page dynamically if needed
+                console.log(data.message);
+                //alert(data.result); // Display the result
             })
             .catch(error => console.error("Error:", error));
         }
     </script>
 </head>
 <body>
-    <h1>Instructions</h1>
-    <p>Here are your instructions...</p>
-
-    <!-- Buttons -->
-    <button onclick="callFunction('previous')">Previous</button>
-    <button onclick="callFunction('next')">Next</button>
+    <h1>Instructions Page</h1>
+    <button onclick="triggerBackend('previous')">Previous</button>
+    <button onclick="triggerBackend('next')">Next</button>
 </body>
 </html>
