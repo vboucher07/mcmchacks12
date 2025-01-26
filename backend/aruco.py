@@ -44,7 +44,7 @@ def findAruco(
        the object's bounding box. If none found, returns an empty list.
     """
 
-    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
     if not cap.isOpened():
         print("Error opening camera.")
         return []
@@ -140,3 +140,23 @@ def findAruco(
     if show_frame:
         cv2.destroyAllWindows()
     return final_result_list
+
+
+if __name__ == "__main__":
+    # Suppose you want to find ArUco marker ID=7
+    # using 4x4_50 dictionary. Adjust as needed.
+    results = findAruco(
+        arucoNumber=2,
+        aruco_dict=cv2.aruco.DICT_4X4_50,
+        max_frames = 500,     # try 20 frames
+        show_frame=True,   # show the camera feed with draws
+        min_area=500,
+        max_area=100000
+    )
+
+    # Print out each match
+    if len(results) == 0:
+        print("No matching objects/markers found.")
+    else:
+        for (object_bbox, marker_bbox) in results:
+            print("Object BBox:", object_bbox, "Marker BBox:", marker_bbox)
