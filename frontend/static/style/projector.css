@@ -1,0 +1,12 @@
+
+
+button{ 
+    background-color: transparent;
+    border: transparent;
+}
+
+.home{
+    object-position: 5px 5px;
+    margin-top: 5px;
+    width: 40px;
+}
