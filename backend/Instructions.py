@@ -1,3 +1,9 @@
+import os
+
+
+IMAGES_DIRECTORY = "./frontend/static/steps"
+
+
 class Part:
 
     def __init__(self, tag, step_num):
@@ -95,33 +101,12 @@ class Step:
         num_of_steps+=1
 
 
-
-#Testing
-"""
-part1 = Part(1, [1])
-part2 = Part(2, [1, 3, 5, 7])
-part3 = Part(3, [2,4,6])
-part4 = Part(4, [8])
-substep1_1_parts = [part1]
-substep1_2_parts = [part1, part2]
-substep2_1_parts = [part3]
-substep1_1 = Substep(1, substep1_1_parts, 0)
-substep1_1.add_substep()
-substep1_2 = Substep(1, substep1_2_parts, 0)
-substep1_2.add_substep()
-substep2_1 = Substep(1, substep2_1_parts, 0)
-substep2_1.add_substep()
-step1 = Step(1, substep1_1)
-step2 = Step(2, substep2_1)
-step1.add_step()
-step2.add_step()
-
-print(step1)
-print(step1.substep_head)
-print(step1.substep_head.next)
-print(step1.next)
-print(step2.get_next_step())
-"""
+def generate_from_images():
+    for entry in sorted(os.listdir(IMAGES_DIRECTORY)):
+        entry_path = os.path.join(IMAGES_DIRECTORY, entry)
+        if os.path.isdir(entry_path):  # Check if it's a directory
+            print(entry)
 
 
-
+if __name__ == "__main__":
+    generate_from_images()
