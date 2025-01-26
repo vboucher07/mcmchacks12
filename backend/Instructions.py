@@ -4,109 +4,140 @@ import os
 IMAGES_DIRECTORY = "./frontend/static/steps"
 
 
-class Part:
-
-    def __init__(self, tag, step_num):
-        self.tag = tag
-        self.step_num = step_num
-        #self.substep_num = substep_num
-
-    def __str__(self):
-        return f"Part Tag: {self.stag} Steps: {self.step_num}"
-
 class Substep: 
-    def __init__(self, number, parts, instructions):
-        self.number = number
-        self.parts = parts
-        self.instructions = instructions
+    def __init__(self, path):
+        self.aruco = None
+        self.path = path
         self.prev = None
         self.next = None
        
-    head = None
-    tail = None
-    global num_of_substeps 
-    num_of_substeps = 0
     
-    def get_parts_tags(self):
-        parts_tags = []
-        for i in self.parts:
-            parts_tags.append(self.parts[i].tag)
-        return parts_tags
-
-    def __str__(self):
-        parts_tags = self.get_parts_tags
-        return f"Subtep: {self.number} Parts: {parts_tags}"
-
-    def get_next_substep(self):
+    def get_next(self):
         if self.next == None:
             return self
         return self.next
     
-    def get_prev_substep(self):
+    def get_prev(self):
         if self.prev == None:
             return self
         return self.prev
 
-    def add_substep(self):
-        global num_of_substeps
-        if num_of_substeps == 0:
-            Substep.head = self
-            Substep.tail = self
-        else:
-            Substep.tail.next = self
-            self.prev = Substep.tail
-            Substep.tail = self
-        num_of_substeps+=1
+    def set_aruco(self, aruco):
+        self.aruco = aruco
+        return
+
+    def get_aruco(self):
+        return self.aruco
+
+    def get_path(self):
+        return self.path
+
+    def set_next(self, nextNode):
+        self.next = nextNode
+        self.next.prev = self
+        return
+
 
 class Step: 
-    def __init__(self, number, substep_head):
-        self.number = number
-        self.substep_head = substep_head
-        self.prev = None
+    def __init__(self, number: int, path):
+        self.number = number    #number corresponds to the step number
+        self.path = path
+        self.substepHead = None
         self.next = None
+        self.prev = None
+        return
+
+    def get_number(self):
+        return self.number
+
+    def get_path(self):
+        return self.path
             
-    head = None
-    tail = None
-    global num_of_steps
-    num_of_steps = 0
-    
-    """def get_parts_tags(self):
-        parts_tags = []
-        for i in self.parts:
-            parts_tags.append(self.parts[i].tag)
-        return parts_tags*/"""
-
-    def __str__(self):
-        return f"Step: {self.number}"
-
-    def get_next_step(self):
+    def get_next(self):
         if self.next == None:
             return self
         return self.next
     
-    def get_prev_step(self):
+    def get_prev(self):
         if self.prev == None:
             return self
         return self.prev
 
-    def add_step(self):
-        global num_of_steps
-        if num_of_steps == 0:
-            Step.head = self
-            Step.tail = self
+    def set_next(self, nextNode):
+        self.next = nextNode
+        self.next.prev = self
+        return
+
+    def set_head(self, substepHead):
+        self.substepHead = substepHead
+        return
+
+    def get_head(self):
+        return self.substepHead
+
+
+def generate_substeps(step):
+    headSubstep = Substep("")
+    previousSubstep = headSubstep
+    step_path = step.get_path()
+
+    images = sorted(os.listdir(step_path))
+    for image in images:
+        image_path = os.path.join(step_path, image)
+        currentSubstep = Substep(image_path.replace("./frontend", ""))
+        if headSubstep.get_path() == "":
+            headSubstep = currentSubstep
+            previousSubstep = currentSubstep
+
         else:
-            Step.tail.next = self
-            self.prev = Step.tail
-            Step.tail = self
-        num_of_steps+=1
+            previousSubstep.set_next(currentSubstep)
+            previousSubstep = currentSubstep
+
+    step.set_head(headSubstep)
+
+    return
 
 
-def generate_from_images():
+def generate_steps():
+    headStep = Step(-1, "")
+    previousStep = headStep
+    directories = []
+
+    # Generate list of directories in static/steps
     for entry in sorted(os.listdir(IMAGES_DIRECTORY)):
         entry_path = os.path.join(IMAGES_DIRECTORY, entry)
         if os.path.isdir(entry_path):  # Check if it's a directory
-            print(entry)
+            directories.append(entry_path)
+
+    # Transform array list into linked list, with numbers and paths
+    for i in range(len(directories)):
+        currentStep = Step(i, directories[i])
+        generate_substeps(currentStep)
+
+        if headStep.get_number() == -1:
+            headStep = currentStep
+            previousStep = currentStep
+
+        else:
+            previousStep.set_next(currentStep)
+            previousStep = currentStep
+
+    return headStep
 
 
 if __name__ == "__main__":
-    generate_from_images()
+    head = generate_steps()
+    while(head.next != None):
+        print(head.get_number())
+        subHead = head.get_head()
+        print(subHead.get_path())
+        while(True):
+            subHead = subHead.get_next()
+            print(subHead.get_path())
+            if subHead.next == None:
+                break
+        head = head.get_next()
+
+    while(head.prev != None):
+        print(head.get_number())
+        head = head.get_prev()
