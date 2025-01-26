@@ -1,6 +1,6 @@
 import frontend
 
-from backend import steps
+from backend import steps, detection
 
 
 if __name__ == "__main__":
@@ -9,12 +9,14 @@ if __name__ == "__main__":
     @frontend.register_action("prev")
     def previousStep_action():
         image_path, aruco_code = steps.prev()
+        detection.highlightShape(aruco_code)
         print(aruco_code)
         return image_path
 
     @frontend.register_action("next")
     def nextStep_action():
         image_path, aruco_code = steps.next()
+        detection.highlightShape(aruco_code)
         print(aruco_code)
         return image_path
 

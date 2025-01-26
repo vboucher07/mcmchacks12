@@ -1,3 +1,4 @@
+import os
 import cv2
 import numpy as np
 
@@ -63,7 +64,7 @@ def detect_objects_live_once(
     # Verify if the resolution was set correctly
     actual_width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
     actual_height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-    print(f"Camera resolution set to: Width={actual_width}, Height={actual_height}")
+    # print(f"Camera resolution set to: Width={actual_width}, Height={actual_height}")
 
     final_bboxes = []
 
@@ -106,32 +107,42 @@ def detect_objects_live_once(
         final_bboxes = bboxes_this_frame
 
         # Show the live feed
-        cv2.imshow("Live Object Detection", frame)
+        # cv2.imshow("Live Object Detection", frame)
         # Press 'q' to quit early
+        if len(bboxes_this_frame) > 0:
+            break
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
     # Cleanup
     cap.release()
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
 
     # final_bboxes holds bounding boxes from the *last* processed frame
     return final_bboxes
+
+def detectTiny():
+    return detect_objects_live_once(
+        camera_index=0,
+        min_area=1000,
+        max_area=3000,
+        max_frames=3
+    )
 
 def detectMedium():
     return detect_objects_live_once(
         camera_index=0,
         min_area=15000,
         max_area=50000,
-        max_frames=30
+        max_frames=3
     )
 
 def detectSmall():
     return detect_objects_live_once(
         camera_index=0,
-        min_area=1000,
-        max_area=5000,
-        max_frames=30
+        min_area=3000,
+        max_area=6000,
+        max_frames=3
     )
 
 def detectBigBoys():
@@ -139,7 +150,7 @@ def detectBigBoys():
         camera_index=0,
         min_area=125000,
         max_area=175000,
-        max_frames=30
+        max_frames=3
     )
 
 def highlightRegionsAllScaled(
@@ -214,21 +225,21 @@ def highlightRegionsAllScaled(
         # Draw a green rectangle (filled)
         cv2.rectangle(mask, (x1, y1), (x2, y2), (0, 255, 0), -1)
 
-    window_name = "Scaled Highlight"
-    cv2.namedWindow(window_name, cv2.WINDOW_FULLSCREEN)
+    # window_name = "Scaled Highlight"
+    # cv2.namedWindow(window_name, cv2.WINDOW_FULLSCREEN)
 
-    cv2.imshow(window_name, mask)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow(window_name, mask)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
     # Save if requested
     if highlighted_image_path:
         import os
         dir_name = os.path.dirname(highlighted_image_path)
-        if dir_name:
+        if not dir_name:
             os.makedirs(dir_name, exist_ok=True)
         cv2.imwrite(highlighted_image_path, mask)
-        print(f"Saved scaled highlight mask to: {highlighted_image_path}")
+        # print(f"Saved scaled highlight mask to: {highlighted_image_path}")
 
     return mask
 
@@ -306,23 +317,25 @@ def highlightRegionWithHomographyAndScaling(boundingBoxes, scaling_factor_x=1.2,
         cv2.rectangle(mask, (new_x_min, new_y_min), (new_x_min + w, new_y_min + h), (0, 255, 0), -1)
 
     # Display the result
-    window_name = "Highlight with Independent Scaling"
-    cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
-    cv2.moveWindow(window_name, -1920, 500)  # Adjust for your display setup
-    cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+    # window_name = "Highlight with Independent Scaling"
+    # cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
+    # cv2.moveWindow(window_name, -1920, 500)  # Adjust for your display setup
+    # cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
-    cv2.imshow(window_name, mask)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow(window_name, mask)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
     # Save the result if requested
     if highlighted_image_path:
         import os
         dir_name = os.path.dirname(highlighted_image_path)
-        if dir_name:
+        if not dir_name:
             os.makedirs(dir_name, exist_ok=True)
-        cv2.imwrite(highlighted_image_path, mask)
-        print(f"Saved scaled highlight mask to: {highlighted_image_path}")
+        succeed = cv2.imwrite(highlighted_image_path, mask)
+        if not succeed:
+            print("FAILED WRITING THE BULLSHIT")
+        # print(f"Saved scaled highlight mask to: {highlighted_image_path}")
 
     return mask
 
@@ -334,39 +347,60 @@ def highlightShape(shape):
      '''
      scaling_factor_x = 1.75
      scaling_factor_y = 1.45
+     save_path = os.getcwd() + r"\frontend\static\projector.jpg"
+    #  print(os.getcwd())
 
-     if shape == 0:
-        bboxes = detectSmall()
-        print("Final bounding boxes:", bboxes)
+     if shape == 4:
+        bboxes = detectTiny()
+        if len(bboxes) > 0:
+            bboxes = [bboxes[0]]
+        # print("Final bounding boxes:", bboxes)
         # highlightRegionsAllScaled(
         # bounding_boxes=bboxes,
         # original_width=camera_w,
         # original_height=camera_h,
         # highlighted_image_path="scaled_highlights.jpg"
         # )
-        highlightRegionWithHomographyAndScaling(bboxes, scaling_factor_x=scaling_factor_x, scaling_factor_y=scaling_factor_y, highlighted_image_path="scaled_highlights.jpg")
+        highlightRegionWithHomographyAndScaling(bboxes, scaling_factor_x=scaling_factor_x, scaling_factor_y=scaling_factor_y, highlighted_image_path=save_path)
 
      if shape == 1:
-        bboxes = detectMedium()
-        print("Final bounding boxes:", bboxes)
+        bboxes = detectSmall()
+        if len(bboxes) > 0:
+            bboxes = [bboxes[0]]
+        # print("Final bounding boxes:", bboxes)
         # highlightRegionsAllScaled(
         # bounding_boxes=bboxes,
         # original_width=camera_w,
         # original_height=camera_h,
         # highlighted_image_path="scaled_highlights.jpg"
         # )
-        highlightRegionWithHomographyAndScaling(bboxes, scaling_factor_x=scaling_factor_x, scaling_factor_y=scaling_factor_y, highlighted_image_path="scaled_highlights.jpg")
+        highlightRegionWithHomographyAndScaling(bboxes, scaling_factor_x=scaling_factor_x, scaling_factor_y=scaling_factor_y, highlighted_image_path=save_path)
+
+     if shape == 3:
+        bboxes = detectMedium()
+        if len(bboxes) > 0:
+            bboxes = [bboxes[0]]
+        # print("Final bounding boxes:", bboxes)
+        # highlightRegionsAllScaled(
+        # bounding_boxes=bboxes,
+        # original_width=camera_w,
+        # original_height=camera_h,
+        # highlighted_image_path="scaled_highlights.jpg"
+        # )
+        highlightRegionWithHomographyAndScaling(bboxes, scaling_factor_x=scaling_factor_x, scaling_factor_y=scaling_factor_y, highlighted_image_path=save_path)
 
      if shape == 2:
         bboxes = detectBigBoys()
-        print("Final bounding boxes:", bboxes)
+        if len(bboxes) > 0:
+            bboxes = [bboxes[0]]
+        # print("Final bounding boxes:", bboxes)
         # highlightRegionsAllScaled(
         # bounding_boxes=bboxes,
         # original_width=camera_w,
         # original_height=camera_h,
         # highlighted_image_path="scaled_highlights.jpg"
         # )
-        highlightRegionWithHomographyAndScaling(bboxes, scaling_factor_x=scaling_factor_x, scaling_factor_y=scaling_factor_y, highlighted_image_path="scaled_highlights.jpg")
+        highlightRegionWithHomographyAndScaling(bboxes, scaling_factor_x=scaling_factor_x, scaling_factor_y=scaling_factor_y, highlighted_image_path=save_path)
 
 if __name__ == "__main__":
-    highlightShape(0)
+    highlightShape(3)
