@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="/static/style/instructions.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instructions</title>
@@ -27,12 +28,16 @@
     </script>
 </head>
 <body>
-    <h1>Instructions Page</h1>
-    <button onclick="updateImage('prev')">Prev</button>
-    <button onclick="updateImage('next')">Next</button>
-    <button onclick="updateImage('update')">Update</button>
-    <div style="margin-top: 20px;">
-        <img id="instruction-image" src="/static/steps/step01.png" alt="Instruction Image" style="max-width: 100%; height: auto;">
+    <h1>Instructions Page <img class="logo" src="/static/images/SL_logo.png" /></h1>
+    <div class="buttons">
+        <button onclick="location.href='/'"><img class="arrows" src="/static/images/SL_logo_border.png" /></button>
+        <button onclick="updateImage('prev')"><img class="arrows" src="/static/images/prev.png" /></button>
+        <button onclick="updateImage('next')"><img class="arrows" src="/static/images/next.png" /></button>
+        <button onclick="updateImage('update')"><img class="arrows" src="/static/images/update.png" /></button>
+        
+    </div>
+    <div style="margin-top: 10px;">
+        <img class="instruction_imgs" id="instruction-image" src="/static/steps/step01.png" alt="Instruction Image">
     </div>
 </body>
 </html>
